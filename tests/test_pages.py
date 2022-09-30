@@ -1,57 +1,40 @@
 from page_objects import *
-from page_objects.wait import wait_element
 
 
-def test_login_page_external(driver):
-    driver.get(driver.url + "/admin")
-    driver.find_element(*AdminPage.USERNAME)
-    driver.find_element(*AdminPage.PASSWORD)
-    driver.find_element(*AdminPage.FORGOTTEN_PASSWORD)
-    driver.find_element(*AdminPage.LOGIN_BUTTON)
-    driver.find_element(*AdminPage.OPENCART_LINK)
+class TestsPage:
 
+    def test_register_page_external(self, driver):
+        """Тест только валидными данными - Регистрация нового пользователя"""
+        register_page = RegisterPage(driver)
+        register_page.open(register_page.PATH)
+        register_page.register()
+        result_text_success_register = register_page.page_creat_account()
+        assert f'{result_text_success_register}' == 'Your Account Has Been Created!'
 
-def test_register_page_external(driver):
-    driver.get(driver.url + "/index.php?route=account/register")
-    driver.find_element(*RegisterPage.FIRSTNAME)
-    driver.find_element(*RegisterPage.LASTNAME)
-    driver.find_element(*RegisterPage.EMAIL)
-    driver.find_element(*RegisterPage.TELEFONE)
-    driver.find_element(*RegisterPage.PASSWORD)
-    driver.find_element(*RegisterPage.CONFIRM_PASSWORD)
-    driver.find_element(*RegisterPage.CHECKBOX_AGREE)
-    driver.find_element(*RegisterPage.CONTINUE_BTN)
+    def test_main_page(self, driver):
+        """Переключение валют из верхнего меню опенкарта"""
+        main_page = MainPage(driver)
+        main_page.open(main_page.PATH)
+        list_currency = ["$ US Dollar", "£ Pound Sterling", "€ Euro"]
+        random_currency = main_page.choose_currency()
+        assert random_currency in list_currency
 
+    def test_add_new_product(self, driver):
+        """Добавление нового товара в разделе администратора"""
+        admin_page = AdminPage(driver)
+        admin_page.open(admin_page.PATH)
+        admin_page.login("user", 'bitnami')
+        admin_page.choose_element_catalog_menu()
+        product = admin_page.add_new_product()
+        result_pr = admin_page.form_result()
+        assert product in result_pr
 
-def test_main_page(driver):
-    driver.get(driver.url)
-    driver.find_element(*MainPage.LOGO)
-    driver.find_element(*MainPage.SEARCH_INPUT)
-    driver.find_element(*MainPage.DESKTOPS_BTN)
-    driver.find_element(*MainPage.SHOPPING_CART)
-    driver.find_element(*MainPage.LAPTOP)
-
-
-def test_desktops_page(driver):
-    driver.get(driver.url + "/desktops")
-    driver.find_element(*DesktopsPage.LIST_SHOW)
-    driver.find_element(*DesktopsPage.GRID_SHOW)
-    driver.find_element(*DesktopsPage.SORT_BY)
-    driver.find_element(*DesktopsPage.AMOUNT_LINES)
-    driver.find_element(*DesktopsPage.WISH_LIST)
-
-
-def test_product_card_mac(driver):
-    driver.get(driver.url + "/desktops/mac/imac")
-    driver.find_element(*ProductCard.DESCRIPTION)
-    driver.find_element(*ProductCard.REVIEW)
-    driver.find_element(*ProductCard.INPUT_QUANTITY)
-    driver.find_element(*ProductCard.COMPARE_PRODUCT)
-
-
-def test_alert(driver):
-    driver.get(driver.url + "/desktops/mac/imac")
-    button_click = driver.find_element(*ProductCard.BUTTON_CART)
-    button_click.click()
-    wait_element(driver, MainPage.ALERT)
-    driver.find_element(*MainPage.CLOSE).click()
+    def test_del_new_product(self, driver):
+        """Удаление товара из списка в разделе администартора"""
+        admin_page = AdminPage(driver)
+        admin_page.open(admin_page.PATH)
+        admin_page.login("user", 'bitnami')
+        admin_page.choose_element_catalog_menu()
+        admin_page.serch_product('last iPhone')
+        name_del_product = admin_page.del_product()
+        assert name_del_product == "No results!"
