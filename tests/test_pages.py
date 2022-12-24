@@ -1,8 +1,12 @@
+import allure
+import pytest
+
 from page_objects import *
 
 
 class TestsPage:
 
+    @allure.title('Регистрация нового пользователя')
     def test_register_page_external(self, driver):
         """Тест только валидными данными - Регистрация нового пользователя"""
         register_page = RegisterPage(driver)
@@ -11,6 +15,8 @@ class TestsPage:
         result_text_success_register = register_page.page_creat_account()
         assert f'{result_text_success_register}' == 'Your Account Has Been Created!'
 
+    @allure.title('Переключение валют')
+    @pytest.mark.skip(reason="Broken")
     def test_main_page(self, driver):
         """Переключение валют из верхнего меню опенкарта"""
         main_page = MainPage(driver)
@@ -19,6 +25,7 @@ class TestsPage:
         random_currency = main_page.choose_currency()
         assert random_currency in list_currency
 
+    @allure.title('Добавление нового товара')
     def test_add_new_product(self, driver):
         """Добавление нового товара в разделе администратора"""
         admin_page = AdminPage(driver)
@@ -29,6 +36,7 @@ class TestsPage:
         result_pr = admin_page.form_result()
         assert product in result_pr
 
+    @allure.title('Удаление товара ')
     def test_del_new_product(self, driver):
         """Удаление товара из списка в разделе администартора"""
         admin_page = AdminPage(driver)

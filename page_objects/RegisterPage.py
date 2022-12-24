@@ -1,3 +1,4 @@
+import allure
 from selenium.webdriver.common.by import By
 from page_objects.BasePage import BasePage
 from generator.generator import generated_person
@@ -15,7 +16,7 @@ class RegisterPage(BasePage):
     PRIVACY_POLICY = (By.CSS_SELECTOR, "input[type=checkbox]")
     CONTINUE_BTN = (By.CSS_SELECTOR, "input.btn.btn-primary")
     SUCCESS_CREAT_ACCOUNT = (By.CSS_SELECTOR, "#common-success > ul > li > a[href$='success']")
-    TEXT_SUCCESS = (By.CSS_SELECTOR, "#content > h1")
+    TEXT_SUCCESS = (By.CSS_SELECTOR, "#content > h11")
 
     def register(self):
         person = generated_person()
