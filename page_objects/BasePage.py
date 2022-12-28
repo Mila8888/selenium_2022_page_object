@@ -23,7 +23,6 @@ class BasePage:
         file_handler = logging.FileHandler(f'{__name__}.log')
         file_handler.setFormatter(logging.Formatter('%(name)s - %(levelname)s - %(message)s'))
         self.logger.addHandler(file_handler)
-        self.logger.setLevel(level=self.driver.log_level)
 
     @allure.step("Открываю эндпоинт {path}")
     def open(self, path):

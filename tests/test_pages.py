@@ -16,7 +16,7 @@ class TestsPage:
         assert f'{result_text_success_register}' == 'Your Account Has Been Created!'
 
     @allure.title('Переключение валют')
-    @pytest.mark.skip(reason="Broken")
+    # @pytest.mark.skip(reason="Broken")
     def test_main_page(self, driver):
         """Переключение валют из верхнего меню опенкарта"""
         main_page = MainPage(driver)
