@@ -4,22 +4,20 @@ import os
 
 import pytest
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service as ChromiumService
-from selenium.webdriver.firefox.service import Service as FFService
 
 
 def pytest_addoption(parser):
     # Запуск из cmd -->  Пример: pytest -v --browser chrome
     parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--executor", action="store", default="192.168.2.123")
+    parser.addoption("--executor", action="store", default='192.168.177.208')
     parser.addoption("--mobile", action="store_true")
     parser.addoption("--vnc", action="store_true")
     parser.addoption("--logs", action="store_true")
     parser.addoption("--video", action="store_true")
     parser.addoption("--bv")
     parser.addoption("--headless", action="store_true", help="Без запуска браузера pytest --headless")
-    parser.addoption("--url", action="store", default="http://192.168.2.123:8082")
-    parser.addoption("--drivers", action="store", default=os.path.expanduser("~/Documents/drivers"))
+    parser.addoption("--url", action="store", default="http://192.168.177.208:8082")
+    parser.addoption("--drivers", action="store")
     parser.addoption("--log_level", action="store", default="DEBUG")
 
 
@@ -32,9 +30,7 @@ def driver(request):
     vnc = request.config.getoption("--vnc")
     logs = request.config.getoption("--logs")
     video = request.config.getoption("--video")
-    headless = request.config.getoption("--headless")
     url = request.config.getoption("--url")
-    drivers = request.config.getoption("--drivers")
     log_level = request.config.getoption("--log_level")
 
     logger = logging.getLogger(request.node.name)
@@ -45,22 +41,7 @@ def driver(request):
 
     logger.info("===> Test {} started at {}".format(request.node.name, datetime.datetime.now()))
 
-    if browser == "chrome":
-        options = webdriver.ChromeOptions()
-        service = ChromiumService(executable_path=drivers + "/chromedriver")
-        if headless:
-            options.headless = True
-        driver = webdriver.Chrome(service=service, options=options)
-    elif browser == "firefox":
-        service = FFService(executable_path=drivers + "/geckodriver")
-        driver = webdriver.Firefox(service=service)
-    elif browser == "opera":
-        driver = webdriver.Opera(executable_path=drivers + "/operadriver")
-    else:
-        driver = webdriver.Safari()
-
     executor_url = f"http://{executor}:4444/wd/hub"
-
     caps = {
         "browserName": browser,
         "browserVersion": version,
@@ -71,13 +52,14 @@ def driver(request):
         }
     }
 
-    driver.log_level = log_level
-    driver.logger = logger
-    driver.test_name = request.node.name
     driver = webdriver.Remote(
         command_executor=executor_url,
         desired_capabilities=caps
     )
+
+    driver.log_level = log_level
+    driver.logger = logger
+    driver.test_name = request.node.name
 
     driver.maximize_window()
 

@@ -2,20 +2,18 @@
 FROM python:3.10-alpine
 
 # Устанавка рабочего директория внутри контейнера
-# Директорий будет создан если его не было
-# Будет в дальнейшем использоваться как базовый
 WORKDIR /app
 
 # Копирование зависимостей
-# Для того чтобы не пересобирать их каждый раз при сборке образа
-COPY requirements.txt .
+COPY requirements.txt /app/requirements.txt
 
 # Установка зависимостей
 RUN pip install -U pip
 RUN pip install -r requirements.txt
+RUN pip install webdriver-manager
 
 # Копирование остальных файлов проекта
-COPY . .
+COPY . /app
 
-# Запуск тестов
-ENTRYPOINT ["pytest"]
+## Запуск тестов
+CMD ["pytest"]

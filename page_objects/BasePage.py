@@ -9,11 +9,6 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-
-# logger = logging.getLogger(__name__)
-# logger.setLevel('DEBUG')
-# print(logger.level)
-
 class BasePage:
     def __init__(self, driver, timeout=5):
         self.driver = driver
