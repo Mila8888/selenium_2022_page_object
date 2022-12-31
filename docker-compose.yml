@@ -9,6 +9,8 @@ services:
       - PMA_USER=bn_opencart
     ports:
       - '8888:80'
+    logging:
+      driver: none
     networks:
       - selenoid
 
@@ -22,6 +24,8 @@ services:
       - 'mariadb_data:/bitnami/mariadb'
     ports:
       - '3306:3306'
+    logging:
+      driver: none
     networks:
       - selenoid
 
@@ -42,15 +46,21 @@ services:
       - 'opencart_storage_data:/bitnami/opencart_storage/'
     depends_on:
       - mariadb
+    logging:
+      driver: none
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://0.0.0.0:8080/index.php?route=account/register" ]
+      interval: 10s
+      timeout: 10s
+      retries: 10
     networks:
       - selenoid
 
   tests:
     build: .
     depends_on:
-      - opencart
-      - phpadmin
-      - mariadb
+      opencart:
+        condition: service_healthy
     networks:
       - selenoid
 

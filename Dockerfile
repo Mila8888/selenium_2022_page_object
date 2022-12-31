@@ -10,7 +10,6 @@ COPY requirements.txt /app/requirements.txt
 # Установка зависимостей
 RUN pip install -U pip
 RUN pip install -r requirements.txt
-RUN pip install webdriver-manager
 
 # Копирование остальных файлов проекта
 COPY . /app

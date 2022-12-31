@@ -3,20 +3,21 @@ import logging
 import os
 
 import pytest
+import requests
 from selenium import webdriver
 
 
 def pytest_addoption(parser):
     # Запуск из cmd -->  Пример: pytest -v --browser chrome
     parser.addoption("--browser", action="store", default="chrome")
-    parser.addoption("--executor", action="store", default='192.168.177.208')
+    parser.addoption("--executor", action="store", default='192.168.2.128')
     parser.addoption("--mobile", action="store_true")
     parser.addoption("--vnc", action="store_true")
     parser.addoption("--logs", action="store_true")
     parser.addoption("--video", action="store_true")
     parser.addoption("--bv")
     parser.addoption("--headless", action="store_true", help="Без запуска браузера pytest --headless")
-    parser.addoption("--url", action="store", default="http://192.168.177.208:8082")
+    parser.addoption("--url", action="store", default="http://192.168.2.128:8082")
     parser.addoption("--drivers", action="store")
     parser.addoption("--log_level", action="store", default="DEBUG")
 
@@ -65,6 +66,7 @@ def driver(request):
 
     def fin():
         driver.quit()
+        requests.delete(f'http://{executor}:4444/wd/hub/session/{driver.session_id}', verify=False)
         logger.info("===> Test {} finished at {}".format(request.node.name, datetime.datetime.now()))
 
     request.addfinalizer(fin)
